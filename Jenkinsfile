@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker rm -f paytm-registration || true'
-                    sh 'docker run -d --name paytm-registration -p 8080:80 $DOCKER_IMAGE:latest'
+                    sh 'docker run -d --name paytm-registration -p 9090:80 $DOCKER_IMAGE:latest'
                 }
             }
         }
