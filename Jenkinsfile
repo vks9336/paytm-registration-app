@@ -3,13 +3,13 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credentials ID
-        DOCKER_IMAGE = "yourdockerhubusername/paytm-registration"
+        DOCKER_IMAGE = "vishal933610/paytm-registration"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-repo/paytm-registration-app.git'
+                git branch: 'main', url: 'https://github.com/vks9336/paytm-registration-app.git'
             }
         }
 
