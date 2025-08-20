@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paytm-registration-app
+  labels:
+    app: paytm-registration-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paytm-registration-app
+  template:
+    metadata:
+      labels:
+        app: paytm-registration-app
+    spec:
+      containers:
+      - name: paytm-app
+        image: paytm-app:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paytm-registration-service
+spec:
+  selector:
+    app: paytm-registration-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paytm-registration-service-loadbalancer
+spec:
+  selector:
+    app: paytm-registration-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

@@ -1,57 +1,44 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credentials ID
-        DOCKER_IMAGE = "vishal933610/paytm-registration"
+    options {
+        ansiColor('xterm')
     }
-
+    environment {
+        DOCKER_IMAGE = 'itguruanil/paytm-registration'
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-creds')
+    }
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/vks9336/paytm-registration-app.git'
+                git branch: 'main', url: 'https://github.com/aniljain19723/demo.git'
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t $DOCKER_IMAGE:$BUILD_NUMBER .'
-                }
+                sh "docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ."
             }
         }
-
         stage('Login to DockerHub') {
             steps {
-                script {
-                    sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
                 }
             }
         }
-
         stage('Push to DockerHub') {
             steps {
-                script {
-                    sh 'docker push $DOCKER_IMAGE:$BUILD_NUMBER'
-                    sh 'docker tag $DOCKER_IMAGE:$BUILD_NUMBER $DOCKER_IMAGE:latest'
-                    sh 'docker push $DOCKER_IMAGE:latest'
-                }
+                sh "docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                sh "docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest"
+                sh "docker push ${DOCKER_IMAGE}:latest"
             }
         }
-
-        stage('Deploy on Local Docker') {
+        stage('Deploy Locally') {
             steps {
-                script {
-                    sh 'docker rm -f paytm-registration || true'
-                    sh 'docker run -d --name paytm-registration -p 8081:80 $DOCKER_IMAGE:latest'
-                }
+                sh """
+                docker rm -f paytm-registration || true
+                docker run -d -p 8081:80 --name paytm-registration ${DOCKER_IMAGE}:latest
+                """
             }
-        }
-    }
-
-    post {
-        always {
-            echo "Pipeline finished."
         }
     }
 }

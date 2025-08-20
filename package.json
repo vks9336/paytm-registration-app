@@ -1,14 +1,15 @@
+
 {
   "name": "paytm-registration-app",
   "version": "1.0.0",
-  "description": "Paytm registration app",
+  "description": "A minimal Node.js app with an Nginx reverse proxy showing a Paytm-style registration form.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
+  "author": "",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "ejs": "^3.1.9"
+    "express": "^4.19.2"
   }
 }
-
